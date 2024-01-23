@@ -6,8 +6,14 @@ function copyDir() {
   const targetDir = path.join(__dirname, 'files-copy');
 
   function deleteExtraFiles(src, dest, callback) {
-    fs.readdir(dest, { withFileTypes: true }, (_, destFiles) => {
-      fs.readdir(src, { withFileTypes: true }, (_, srcFiles) => {
+    fs.readdir(dest, { withFileTypes: true }, (errDest, destFiles) => {
+      if (errDest) {
+        return callback(null);
+      }
+      fs.readdir(src, { withFileTypes: true }, (errSrc, srcFiles) => {
+        if (errSrc) {
+          return callback(errSrc);
+        }
         const srcFilenames = srcFiles.map((file) => file.name);
         destFiles.forEach((file) => {
           if (!srcFilenames.includes(file.name)) {
